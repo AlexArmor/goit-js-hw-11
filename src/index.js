@@ -19,7 +19,7 @@ const onSearchFormSubmit = event => {
 }
 
 function renderMarkup(promiseArray, position = 'beforeend') {
-    const markup = promiseArray.map(({webformatURL, tags, likes, views, comments, downloads}) => {
+    const markup = promiseArray.hits.map(({webformatURL, tags, likes, views, comments, downloads}) => {
         return `<div class="photo-card">
         <img src="${webformatURL}" alt="${tags}" loading="lazy" />
         <div class="info">

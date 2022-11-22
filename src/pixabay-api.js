@@ -5,7 +5,7 @@ export class PixabayApi {
     #API_KEY = '31498114-afd850579f929b713e5d5f459';
 
     constructor() {
-        this.page = 1;
+        this.page = null;
         this.searchQuery = null;
     }
 

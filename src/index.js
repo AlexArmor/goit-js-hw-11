@@ -9,39 +9,34 @@ const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
 
-
-console.dir(galleryEl);
-
 const pixabayApi = new PixabayApi;
 
-const onSearchFormSubmit = event => {
+const onSearchFormSubmit = async event => {
   event.preventDefault();
   btnLoadMore.classList.add('is-hidden');
   pixabayApi.page = 1;
   galleryEl.innerHTML = '';
   pixabayApi.searchQuery = event.target.elements.searchQuery.value.trim();
 
-  pixabayApi
-    .fetchPhotos()
-    .then(data => {
-      if (data.hits.length === 0) {
+  try{
+    const respons = await pixabayApi.fetchPhotos();
+      if (respons.hits.length === 0) {
         galleryEl.innerHTML = '';
         Notify.failure("Sorry, there are no images matching your search query. Please try again.");
         return;
       }
-      Notify.success(`Hooray! We found ${data.totalHits} images.`);
-      renderMarkup(data)
+      Notify.success(`Hooray! We found ${respons.totalHits} images.`);
+      renderMarkup(respons)
       lightbox.refresh();
-      if (data.totalHits / 40 > pixabayApi.page) {
+      if (respons.totalHits / 40 > pixabayApi.page) {
         btnLoadMore.classList.remove('is-hidden');
         pixabayApi.page += 1;
       }
-    })
-    .catch(err => {
+    } catch(err) {
       galleryEl.innerHTML = '';
       Notify.failure('Error');
       return;
-    });
+    };
 }
 
 function renderMarkup(promiseArray, position = 'beforeend') {
@@ -67,9 +62,9 @@ function renderMarkup(promiseArray, position = 'beforeend') {
   galleryEl.insertAdjacentHTML(position, markup);
 }
 
-function onBtnLoadMoreClick() {
-  pixabayApi.fetchPhotos()
-    .then(data => {
+async function onBtnLoadMoreClick() {
+  try{
+  const data = await pixabayApi.fetchPhotos();
       renderMarkup(data);
 
       const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
@@ -84,13 +79,12 @@ function onBtnLoadMoreClick() {
         btnLoadMore.classList.add('is-hidden');
         Notify.info("We're sorry, but you've reached the end of search results.")
       }
-    })
-    .catch(err => {
+    } catch(err) {
       console.log(err);
-    }).finally(() => {
+    } finally {
       btnLoadMore.disabled = false;
       pixabayApi.page += 1;
-    });
+    };
 }
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);

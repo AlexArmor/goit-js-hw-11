@@ -11,12 +11,22 @@ const pixabayApi = new PixabayApi;
 
 const onSearchFormSubmit = event => {
   event.preventDefault();
+  pixabayApi.searchQuery = event.target.elements.searchQuery.value.trim();
 
-  pixabayApi.searchQuery = event.target.elements.searchQuery.value;
   pixabayApi
     .fetchPhotos()
-    .then(renderMarkup)
-    .catch(err => { console.log(err); });
+    .then(data => {
+      if (data.hits.length === 0) {
+        galleryEl.innerHTML = '';
+        Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+      }
+      renderMarkup(data);
+    })
+    .catch(err => {
+      galleryEl.innerHTML = '';
+      Notify.failure('Error');
+      return;
+    });
 }
 
 function renderMarkup(promiseArray, position = 'beforeend') {

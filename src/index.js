@@ -9,6 +9,9 @@ const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
 
+
+console.dir(galleryEl);
+
 const pixabayApi = new PixabayApi;
 
 const onSearchFormSubmit = event => {
@@ -68,6 +71,14 @@ function onBtnLoadMoreClick() {
   pixabayApi.fetchPhotos()
     .then(data => {
       renderMarkup(data);
+
+      const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+      });
+
       lightbox.refresh();
       if (data.totalHits / 40 <= pixabayApi.page) {
         btnLoadMore.classList.add('is-hidden');

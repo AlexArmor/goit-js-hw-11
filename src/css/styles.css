@@ -12,11 +12,18 @@ body {
   line-height: 1.5;
 }
 
-#search-box {
+/* #search-box {
   font: inherit;
   padding: 8px;
   max-width: 320px;
   margin-bottom: 16px;
+} */
+
+.search-form {
+  background-color: blue;
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 10px;
 }
 
 .gallery {
@@ -50,6 +57,18 @@ img {
   display: flex;
   /* gap: 10px; */
   justify-content: space-around;
+}
+
+.load-more {
+  display: block;
+  border-radius: 10px;
+  width: 120px;
+  height: 50px;
+  font-size: 16px;
+  background-color: blue;
+  border-color: transparent;
+  color: white;
+  margin: 10px auto;
 }
 
 .load-more.is-hidden {

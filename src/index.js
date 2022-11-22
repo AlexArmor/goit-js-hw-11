@@ -6,6 +6,7 @@ import { PixabayApi } from './pixabay-api';
 
 const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
+const btnLoadMore = document.querySelector('.load-more');
 
 const pixabayApi = new PixabayApi;
 
@@ -21,6 +22,7 @@ const onSearchFormSubmit = event => {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.");
       }
       renderMarkup(data);
+      btnLoadMore.classList.remove('is-hidden');
     })
     .catch(err => {
       galleryEl.innerHTML = '';
@@ -52,4 +54,16 @@ function renderMarkup(promiseArray, position = 'beforeend') {
   galleryEl.insertAdjacentHTML(position, markup);
 }
 
+const onBtnLoadMoreClick = (event) => {
+  pixabayApi.page += 1;
+  pixabayApi.fetchPhotos()
+    .then(data => {
+      console.log(data);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}
+
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
+btnLoadMore.addEventListener('click', onBtnLoadMoreClick);

@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  margin: 0;
 }
 
 body {
@@ -19,6 +20,20 @@ body {
   margin-bottom: 16px;
 } */
 
+input {
+  width: 300px;
+  height: 30px;
+  border-radius: 8px;
+  padding: 0 5px;
+}
+
+.search {
+  width: 70px;
+  height: 30px;
+  border-radius: 8px;
+  border-color: transparent;
+}
+
 .search-form {
   background-color: blue;
   text-align: center;
@@ -30,6 +45,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 }
 
 .photo-card {

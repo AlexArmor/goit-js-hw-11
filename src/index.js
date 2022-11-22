@@ -4,6 +4,7 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { PixabayApi } from './pixabay-api';
 
+const lightbox = new SimpleLightbox('.photo-card a', { captionsData: 'alt', captionDelay: 250 });
 const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
@@ -20,12 +21,14 @@ const onSearchFormSubmit = event => {
   pixabayApi
     .fetchPhotos()
     .then(data => {
-      Notify.success(`Hooray! We found ${data.totalHits} images.`);
       if (data.hits.length === 0) {
         galleryEl.innerHTML = '';
         Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+        return;
       }
-      renderMarkup(data);
+      Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      renderMarkup(data)
+      lightbox.refresh();
       if (data.totalHits / 40 > pixabayApi.page) {
         btnLoadMore.classList.remove('is-hidden');
         pixabayApi.page += 1;
@@ -65,6 +68,7 @@ function onBtnLoadMoreClick() {
   pixabayApi.fetchPhotos()
     .then(data => {
       renderMarkup(data);
+      lightbox.refresh();
       if (data.totalHits / 40 <= pixabayApi.page) {
         btnLoadMore.classList.add('is-hidden');
         Notify.info("We're sorry, but you've reached the end of search results.")
@@ -80,5 +84,3 @@ function onBtnLoadMoreClick() {
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
-
-var lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });

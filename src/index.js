@@ -20,6 +20,7 @@ const onSearchFormSubmit = event => {
   pixabayApi
     .fetchPhotos()
     .then(data => {
+      Notify.success(`Hooray! We found ${data.totalHits} images.`);
       if (data.hits.length === 0) {
         galleryEl.innerHTML = '';
         Notify.failure("Sorry, there are no images matching your search query. Please try again.");
@@ -38,9 +39,9 @@ const onSearchFormSubmit = event => {
 }
 
 function renderMarkup(promiseArray, position = 'beforeend') {
-  const markup = promiseArray.hits.map(({ webformatURL, tags, likes, views, comments, downloads }) => {
+  const markup = promiseArray.hits.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
     return `<div class="photo-card">
-        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    <a href=${largeImageURL}><img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
         <div class="info">
           <p class="info-item">
             <b>Likes</b><span>${likes}</span>
@@ -66,6 +67,7 @@ function onBtnLoadMoreClick() {
       renderMarkup(data);
       if (data.totalHits / 40 <= pixabayApi.page) {
         btnLoadMore.classList.add('is-hidden');
+        Notify.info("We're sorry, but you've reached the end of search results.")
       }
     })
     .catch(err => {
@@ -78,3 +80,5 @@ function onBtnLoadMoreClick() {
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
+
+var lightbox = new SimpleLightbox('.gallery a', { captionsData: 'alt', captionDelay: 250 });

@@ -9,15 +9,21 @@ const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
 const btnLoadMore = document.querySelector('.load-more');
 
+let searchCompare;
+
 const pixabayApi = new PixabayApi;
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
   btnLoadMore.classList.add('is-hidden');
   pixabayApi.page = 1;
-  galleryEl.innerHTML = '';
   pixabayApi.searchQuery = event.target.elements.searchQuery.value.trim();
-
+  if(pixabayApi.searchQuery === searchCompare){
+    return;
+  }
+  searchCompare = event.target.elements.searchQuery.value.trim();
+  galleryEl.innerHTML = '';
+  
   try{
     const {data} = await pixabayApi.fetchPhotos();
       if (data.hits.length === 0) {
@@ -25,6 +31,7 @@ const onSearchFormSubmit = async event => {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.");
         return;
       }
+
       Notify.success(`Hooray! We found ${data.totalHits} images.`);
       renderMarkup(data)
       lightbox.refresh();
@@ -90,3 +97,4 @@ async function onBtnLoadMoreClick() {
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
+console.log();

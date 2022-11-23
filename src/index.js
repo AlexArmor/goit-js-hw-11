@@ -83,7 +83,7 @@ async function onBtnLoadMoreClick() {
       });
 
       lightbox.refresh();
-      if (data.totalHits / 40 <= pixabayApi.page) {
+      if (Math.ceil(data.totalHits / 40) < pixabayApi.page) {
         btnLoadMore.classList.add('is-hidden');
         Notify.info("We're sorry, but you've reached the end of search results.")
       }
@@ -97,4 +97,3 @@ async function onBtnLoadMoreClick() {
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
-console.log();

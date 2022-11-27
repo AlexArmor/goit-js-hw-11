@@ -49,25 +49,28 @@ const onSearchFormSubmit = async event => {
 }
 
 function renderMarkup(promiseArray, position = 'beforeend') {
-  const markup = promiseArray.hits.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
-    return `<div class="photo-card">
-    <a href=${largeImageURL}><img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
-        <div class="info">
-          <p class="info-item">
-            <b>Likes</b><span>${likes}</span>
-          </p>
-          <p class="info-item">
-            <b>Views</b><span>${views}</span>
-          </p>
-          <p class="info-item">
-            <b>Comments</b><span>${comments}</span>
-          </p>
-          <p class="info-item">
-            <b>Downloads</b><span>${downloads}</span>
-          </p>
-        </div>
-      </div>`
-  }).join('');
+  const markup = createGallery(promiseArray.hits);
+
+  // const markup = promiseArray.hits.map(({ largeImageURL, webformatURL, tags, likes, views, comments, downloads }) => {
+  //   return `<div class="photo-card">
+  //   <a href=${largeImageURL}><img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+  //       <div class="info">
+  //         <p class="info-item">
+  //           <b>Likes</b><span>${likes}</span>
+  //         </p>
+  //         <p class="info-item">
+  //           <b>Views</b><span>${views}</span>
+  //         </p>
+  //         <p class="info-item">
+  //           <b>Comments</b><span>${comments}</span>
+  //         </p>
+  //         <p class="info-item">
+  //           <b>Downloads</b><span>${downloads}</span>
+  //         </p>
+  //       </div>
+  //     </div>`
+  // }).join('');
+  
   galleryEl.insertAdjacentHTML(position, markup);
 }
 

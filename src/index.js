@@ -16,12 +16,12 @@ const pixabayApi = new PixabayApi;
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
-  btnLoadMore.classList.add('is-hidden');
-  pixabayApi.page = 1;
   pixabayApi.searchQuery = event.target.elements.searchQuery.value.trim();
   if (pixabayApi.searchQuery === searchCompare) {
     return;
   }
+  btnLoadMore.classList.add('is-hidden');
+  pixabayApi.page = 1;
   searchCompare = event.target.elements.searchQuery.value.trim();
   galleryEl.innerHTML = '';
 

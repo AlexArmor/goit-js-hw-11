@@ -1,8 +1,9 @@
 'use strict';
 import axios from 'axios';
 
+axios.defaults.baseURL = 'https://pixabay.com/api/';
 export class PixabayApi {
-    #BASE_URL = 'https://pixabay.com/api/';
+    // #BASE_URL = 'https://pixabay.com/api/';
     #API_KEY = '31498114-afd850579f929b713e5d5f459';
 
     constructor() {
@@ -23,6 +24,7 @@ export class PixabayApi {
         },
     };
 
-    return axios.get(`${this.#BASE_URL}`, searchParams);
+    return axios.get(`/`, searchParams);
+    // return axios.get(`${this.#BASE_URL}`, searchParams);
     }
 }

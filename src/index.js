@@ -8,11 +8,43 @@ import createGallery from './templates/markup.hbs';
 const lightbox = new SimpleLightbox('.photo-card a', { captionsData: 'alt', captionDelay: 250 });
 const searchFormEl = document.querySelector('#search-form');
 const galleryEl = document.querySelector('.gallery');
-const btnLoadMore = document.querySelector('.load-more');
+// *** button load more ***
+// const btnLoadMore = document.querySelector('.load-more');
+const targetElement = document.querySelector('.js-target-element');
 
 let searchCompare;
 
 const pixabayApi = new PixabayApi;
+
+const observer = new IntersectionObserver(async (entries, observer) => {
+  if (entries[0].isIntersecting) {
+    try {
+      const { data } = await pixabayApi.fetchPhotos();
+      renderMarkup(data);
+
+      const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: "smooth",
+      });
+
+      lightbox.refresh();
+      if (Math.ceil(data.totalHits / 40) === pixabayApi.page) {
+        observer.unobserve(targetElement);
+        Notify.info("We're sorry, but you've reached the end of search results.")
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      pixabayApi.page += 1;
+    };
+  }
+}, {
+  root: null,
+  rootMargin: '0px 0px 400px 0px',
+  threshold: 1,
+});
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
@@ -20,7 +52,7 @@ const onSearchFormSubmit = async event => {
   if (pixabayApi.searchQuery === searchCompare) {
     return;
   }
-  btnLoadMore.classList.add('is-hidden');
+  // btnLoadMore.classList.add('is-hidden'); // *** button load more ***
   pixabayApi.page = 1;
   searchCompare = event.target.elements.searchQuery.value.trim();
   galleryEl.innerHTML = '';
@@ -34,10 +66,11 @@ const onSearchFormSubmit = async event => {
     }
 
     Notify.success(`Hooray! We found ${data.totalHits} images.`);
-    renderMarkup(data)
+    renderMarkup(data);
     lightbox.refresh();
     if (data.totalHits / 40 > pixabayApi.page) {
-      btnLoadMore.classList.remove('is-hidden');
+      // btnLoadMore.classList.remove('is-hidden'); // *** button load more ***
+      observer.observe(targetElement);
       pixabayApi.page += 1;
     }
   } catch (err) {
@@ -70,34 +103,35 @@ function renderMarkup(promiseArray, position = 'beforeend') {
   //       </div>
   //     </div>`
   // }).join('');
-  
+
   galleryEl.insertAdjacentHTML(position, markup);
 }
 
-async function onBtnLoadMoreClick() {
-  try {
-    const { data } = await pixabayApi.fetchPhotos();
-    renderMarkup(data);
+// *** button load more handled ***
+// async function onBtnLoadMoreClick() {
+//   try {
+//     const { data } = await pixabayApi.fetchPhotos();
+//     renderMarkup(data);
 
-    const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
+//     const { height: cardHeight } = document.querySelector(".gallery").firstElementChild.getBoundingClientRect();
 
-    window.scrollBy({
-      top: cardHeight * 2,
-      behavior: "smooth",
-    });
+//     window.scrollBy({
+//       top: cardHeight * 2,
+//       behavior: "smooth",
+//     });
 
-    lightbox.refresh();
-    if (Math.ceil(data.totalHits / 40) < pixabayApi.page) {
-      btnLoadMore.classList.add('is-hidden');
-      Notify.info("We're sorry, but you've reached the end of search results.")
-    }
-  } catch (err) {
-    console.log(err);
-  } finally {
-    btnLoadMore.disabled = false;
-    pixabayApi.page += 1;
-  };
-}
+//     lightbox.refresh();
+//     if (Math.ceil(data.totalHits / 40) < pixabayApi.page) {
+//       btnLoadMore.classList.add('is-hidden');
+//       Notify.info("We're sorry, but you've reached the end of search results.")
+//     }
+//   } catch (err) {
+//     console.log(err);
+//   } finally {
+//     btnLoadMore.disabled = false;
+//     pixabayApi.page += 1;
+//   };
+// }
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
-btnLoadMore.addEventListener('click', onBtnLoadMoreClick);
+// btnLoadMore.addEventListener('click', onBtnLoadMoreClick); *** button load more listener ***
